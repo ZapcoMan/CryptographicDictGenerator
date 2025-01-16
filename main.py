@@ -11,10 +11,11 @@ import string
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
+from rich.progress import Progress
 
 from RegularPasswordDictionary.config_manager import save_config, load_config
 from RegularPasswordDictionary.logger import logger
-from RegularPasswordDictionary.password_generator import generate_passwords
+from RegularPasswordDictionary.password_generator import generate_passwords, calculate_exhaustive_combinations
 
 # 创建命令行参数解析器
 parser = argparse.ArgumentParser(
@@ -49,11 +50,21 @@ if config:
         if hasattr(args, key):
             setattr(args, key, value)
 
+# 计算穷举生成的组合数量
+if args.mode == 'exhaustive':
+    total_combinations = calculate_exhaustive_combinations(args)
+    console = Console()
+    console.print(f"将生成的密码组合总数: {total_combinations}", style="bold yellow")
+    if total_combinations > 1e6:
+        console.print("警告: 这将生成大量的密码组合，可能需要很长时间和大量存储空间。", style="bold red")
+        if input("是否继续? (y/n): ").lower() != 'y':
+            exit(1)
+
 # 生成密码
 if args.mode == 'random':
     passwords = generate_passwords(args)
 elif args.mode == 'exhaustive':
-    passwords = generate_exhaustive_passwords(args)
+    passwords = generate_exhaustive_passwords(args, console)
 else:
     logger.error(f"未知的生成模式: {args.mode}")
     exit(1)
