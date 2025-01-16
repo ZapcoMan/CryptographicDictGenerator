@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 17 1月 2025 12:53上午
 # @Author  : codervibe
-# @File    : config_manager.py.py
+# @File    : config_manager.py
 # @Project : CryptographicDictGenerator
 
 import json

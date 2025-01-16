@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # @Time    : 17 1月 2025 12:54 上午
 # @Author  : codervibe
-# @File    : password_generator.py.py
+# @File    : password_generator.py
 # @Project : CryptographicDictGenerator
 
 import random
 import secrets
 import string
-
 
 def generate_passwords(args):
     """
@@ -63,4 +62,3 @@ def generate_passwords(args):
         passwords.add(password_str)
 
     return passwords
-
