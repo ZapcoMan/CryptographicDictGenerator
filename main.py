@@ -5,6 +5,8 @@
 # @Project : CryptographicDictGenerator
 import argparse
 import json
+from itertools import product
+import string
 
 from rich.console import Console
 from rich.panel import Panel
@@ -35,6 +37,7 @@ parser.add_argument("-sc", "--save-config", default=None, help="保存当前配�
 parser.add_argument("-lc", "--load-config", default=None, help="从指定文件加载配置")
 parser.add_argument("-of", "--output-format", choices=['text', 'json'], default='text', help="输出格式，默认为文本")
 parser.add_argument("-o", "--output-file", default=None, help="将生成的密码保存到指定文件")
+parser.add_argument("-m", "--mode", choices=['random', 'exhaustive'], default='random', help="生成模式，默认为随机生成")
 
 # 解析命令行参数
 args = parser.parse_args()
@@ -47,7 +50,13 @@ if config:
             setattr(args, key, value)
 
 # 生成密码
-passwords = generate_passwords(args)
+if args.mode == 'random':
+    passwords = generate_passwords(args)
+elif args.mode == 'exhaustive':
+    passwords = generate_exhaustive_passwords(args)
+else:
+    logger.error(f"未知的生成模式: {args.mode}")
+    exit(1)
 
 # 保存配置
 if args.save_config:
@@ -63,7 +72,8 @@ if args.save_config:
         "pattern": args.pattern,
         "exclude_chars": args.exclude_chars,
         "output_format": args.output_format,
-        "output_file": args.output_file
+        "output_file": args.output_file,
+        "mode": args.mode
     }
     save_config(args.save_config, config)
 
