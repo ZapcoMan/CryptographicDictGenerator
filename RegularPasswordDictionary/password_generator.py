@@ -7,7 +7,6 @@
 import random
 import secrets
 import string
-from itertools import product
 
 def generate_passwords(args):
     """
@@ -62,37 +61,4 @@ def generate_passwords(args):
         password_str = "".join(passwd)
         passwords.add(password_str)
 
-    return passwords
-
-def generate_exhaustive_passwords(args):
-    """
-    生成所有可能的密码组合
-    :param args: 命令行参数
-    :return: 密码列表
-    """
-    all_chars = ''
-    if args.lowercase > 0:
-        all_chars += string.ascii_lowercase
-    if args.uppercase > 0:
-        all_chars += string.ascii_uppercase
-    if args.numbers > 0:
-        all_chars += string.digits
-    if args.symbols > 0:
-        all_chars += string.punctuation
-    if args.custom_set:
-        all_chars = args.custom_set
-    all_chars = ''.join([ch for ch in all_chars if ch not in args.exclude_chars])
-
-    if not all_chars:
-        logger.error("没有可用的字符集生成密码")
-        return set()
-
-    passwords = set()
-    for length in range(1, args.total_length + 1):
-        for passwd in product(all_chars, repeat=length):
-            password_str = ''.join(passwd)
-            if len(password_str) == args.total_length:
-                passwords.add(password_str)
-                if len(passwords) >= args.number:
-                    return passwords
     return passwords

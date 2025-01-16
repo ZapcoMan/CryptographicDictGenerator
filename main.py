@@ -5,17 +5,15 @@
 # @Project : CryptographicDictGenerator
 import argparse
 import json
-from itertools import product
 import string
 
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-from rich.progress import Progress
 
 from RegularPasswordDictionary.config_manager import save_config, load_config
 from RegularPasswordDictionary.logger import logger
-from RegularPasswordDictionary.password_generator import generate_passwords, calculate_exhaustive_combinations
+from RegularPasswordDictionary.password_generator import generate_passwords
 
 # 创建命令行参数解析器
 parser = argparse.ArgumentParser(
@@ -38,7 +36,6 @@ parser.add_argument("-sc", "--save-config", default=None, help="保存当前配�
 parser.add_argument("-lc", "--load-config", default=None, help="从指定文件加载配置")
 parser.add_argument("-of", "--output-format", choices=['text', 'json'], default='text', help="输出格式，默认为文本")
 parser.add_argument("-o", "--output-file", default=None, help="将生成的密码保存到指定文件")
-parser.add_argument("-m", "--mode", choices=['random', 'exhaustive'], default='random', help="生成模式，默认为随机生成")
 
 # 解析命令行参数
 args = parser.parse_args()
@@ -50,24 +47,8 @@ if config:
         if hasattr(args, key):
             setattr(args, key, value)
 
-# 计算穷举生成的组合数量
-if args.mode == 'exhaustive':
-    total_combinations = calculate_exhaustive_combinations(args)
-    console = Console()
-    console.print(f"将生成的密码组合总数: {total_combinations}", style="bold yellow")
-    if total_combinations > 1e6:
-        console.print("警告: 这将生成大量的密码组合，可能需要很长时间和大量存储空间。", style="bold red")
-        if input("是否继续? (y/n): ").lower() != 'y':
-            exit(1)
-
 # 生成密码
-if args.mode == 'random':
-    passwords = generate_passwords(args)
-elif args.mode == 'exhaustive':
-    passwords = generate_exhaustive_passwords(args, console)
-else:
-    logger.error(f"未知的生成模式: {args.mode}")
-    exit(1)
+passwords = generate_passwords(args)
 
 # 保存配置
 if args.save_config:
@@ -83,8 +64,7 @@ if args.save_config:
         "pattern": args.pattern,
         "exclude_chars": args.exclude_chars,
         "output_format": args.output_format,
-        "output_file": args.output_file,
-        "mode": args.mode
+        "output_file": args.output_file
     }
     save_config(args.save_config, config)
 
