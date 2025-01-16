@@ -5,9 +5,12 @@
 # @Project : CryptographicDictGenerator
 import argparse
 import json
-from config_manager import save_config, load_config
-from password_generator import generate_passwords
+
+from rich.console import Console
+
+from RegularPasswordDictionary.config_manager import save_config, load_config
 from RegularPasswordDictionary.logger import logger
+from RegularPasswordDictionary.password_generator import generate_passwords
 
 # 创建命令行参数解析器
 parser = argparse.ArgumentParser(
@@ -39,7 +42,7 @@ if config:
         if hasattr(args, key):
             setattr(args, key, value)
 
-# 生成密码
+# 生成密码c
 passwords = generate_passwords(args)
 
 # 保存配置
@@ -59,10 +62,16 @@ if args.save_config:
     }
     save_config(args.save_config, config)
 
+# 创建一个Console对象，用于更复杂的输出控制
+console = Console()
+
 # 输出生成的密码列表
 if args.output_format == 'json':
-    print(json.dumps(list(passwords)))
+    if isinstance(passwords, set):
+        passwords = list(passwords)
+    console.print(json.dumps(passwords, indent=4), style="bold blue")
 else:
-    print(list(passwords))
+    for password in passwords:
+        console.print(password, style="bold green")
 
 logger.info(f"成功生成 {len(passwords)} 个密码")
