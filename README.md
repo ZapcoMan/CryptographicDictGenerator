@@ -1,0 +1,2 @@
+# CryptographicDictGenerator
+用于密码爆破的字典生成器包括社工字典
