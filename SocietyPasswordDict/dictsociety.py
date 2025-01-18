@@ -3,14 +3,40 @@
 # @Author  : codervibe
 # @File    : dictsociety.py
 # @Project : pythonBasics
+import argparse
 import itertools
-import string
 import logging
 import os
-import argparse
+import string
+import colorlog
 
 # 配置日志记录
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+handler = colorlog.StreamHandler()
+handler.setFormatter(
+    colorlog.ColoredFormatter(
+        '%(asctime)s - %(log_color)s%(levelname)s%(reset)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        log_colors={
+            'DEBUG': 'cyan',
+            'INFO': 'green',
+            'WARNING': 'yellow',
+            'ERROR': 'red',
+            'CRITICAL': 'bold_red',
+        }
+    )
+)
+logger = colorlog.getLogger()
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
+# 设置命令行参数解析
+parser = argparse.ArgumentParser(description="生成密码字典")
+parser.add_argument("--dict_file", type=str, default="dict.txt", help="密码字典文件路径，默认为 dict.txt")
+parser.add_argument("--info_file", type=str, default="info.txt", help="个人信息文件路径，默认为 info.txt")
+parser.add_argument("--password_length", type=int, default=4, help="密码长度，默认为 4")
+
+args = parser.parse_args()
+
 
 def read_info_list(info_file="info.txt"):
     """
@@ -20,7 +46,7 @@ def read_info_list(info_file="info.txt"):
     """
     info_list = []
     if not os.path.exists(info_file):
-        logging.error(f"文件 {info_file} 不存在")
+        logger.error(f"文件 {info_file} 不存在")
         return info_list
 
     try:
@@ -32,9 +58,9 @@ def read_info_list(info_file="info.txt"):
                 if len(parts) == 2:
                     info_list.append(parts[1])
                 else:
-                    logging.warning(f"格式错误的行: {line.strip()}")
+                    logger.warning(f"格式错误的行: {line.strip()}")
     except Exception as e:
-        logging.error(f"读取个人信息文件时发生错误: {e}")
+        logger.error(f"读取个人信息文件时发生错误: {e}")
     return info_list
 
 
@@ -106,7 +132,7 @@ def combination(dict_file="dict.txt", info_file="info.txt", password_length=4):
     specal_list = create_special_list()
 
     if not infolist:
-        logging.warning("个人信息列表为空，无法生成密码组合")
+        logger.warning("个人信息列表为空，无法生成密码组合")
         return
 
     combinations = generate_password_combinations(infolist, specal_list, password_length)
@@ -115,16 +141,8 @@ def combination(dict_file="dict.txt", info_file="info.txt", password_length=4):
         for password in combinations:
             df.write(password + '\n')
 
-    logging.info(f"生成的密码组合已写入文件 {dict_file}")
+    logger.info(f"生成的密码组合已写入文件 {dict_file}")
 
-
-# 设置命令行参数解析
-parser = argparse.ArgumentParser(description="生成密码字典")
-parser.add_argument("--dict_file", type=str, default="dict.txt", help="密码字典文件路径，默认为 dict.txt")
-parser.add_argument("--info_file", type=str, default="info.txt", help="个人信息文件路径，默认为 info.txt")
-parser.add_argument("--password_length", type=int, default=4, help="密码长度，默认为 4")
-
-args = parser.parse_args()
 
 # 执行密码生成函数
 combination(dict_file=args.dict_file, info_file=args.info_file, password_length=args.password_length)
