@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 17 1月 2025 12:53上午
 # @Author  : codervibe
-# @File    : main.py
+# @File    : RegularDict.py
 # @Project : CryptographicDictGenerator
 import argparse
 import json
