@@ -58,22 +58,9 @@ output_format: text
 ~~~bash 
 python main.py -l 2 -u 2 -n 2 -s 2 -t 8 -nu 10
 ~~~
-### 社工密码生成
-社工密码生成模式下，可以通过个人信息生成可能的密码组合。支持的命令行参数如下：
-
-| 参数名          | 描述                                      | 默认值      |
-|-----------------|-------------------------------------------|-------------|
-| --dict_file      | 密码字典文件路径，默认为 dict.txt          | dict.txt    |
-| --info_file      | 个人信息文件路径，默认为 info.txt          | info.txt    |
-| --password_length| 密码长度，默认为 4                        | 4           |
-
-#### 示例
-使用个人信息文件 `info.txt` 生成长度为6的密码：
-~~~bash 
-python dictsociety.py --info_file info.txt --password_length 6
-~~~
 ## 文件结构
 项目目录结构如下：
+~~~
 CryptographicDictGenerator/ 
 ├── README.md 
 ├── config.yaml 
@@ -81,15 +68,13 @@ CryptographicDictGenerator/
 ├── RegularPasswordDictionary/ 
 │ ├── config_manager.py 
 │ ├── logger.py 
-│ └── password_generator.py 
-└── SocietyPasswordDict/ 
-└── dictsociety.py
+│ └── password_generator.py
+~~~
 ### 文件说明
 - [`main.py`](file://main.py): 主程序入口，处理命令行参数和密码生成逻辑。
 - [`config_manager.py`](file://RegularPasswordDictionary/config_manager.py): 配置文件管理，包括保存和加载配置。
 - [`logger.py`](file://RegularPasswordDictionary/logger.py): 日志记录管理。
 - [`password_generator.py`](file://RegularPasswordDictionary/password_generator.py): 密码生成逻辑实现。
-- [`dictsociety.py`](file://SocietyPasswordDict/dictsociety.py): 社工密码生成逻辑实现。
 
 ## 常见问题解答 (FAQ)
 
